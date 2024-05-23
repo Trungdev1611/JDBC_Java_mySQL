@@ -1,0 +1,53 @@
+Để connect đến database qua JDBC với java, ta phải import nhiều thứ trong package java.sql. Vì vậy ta import
+import java.sql.*;
+
+2. dowload jdbc driver về máy nếu chưa có sau đó import vào external Libraries trong project
+để import ta vào file->projectStructure -> module -> dấu + ->add file jar or directory ->chọn đến thư mục dowload
+
+3. sau đó tạo 1 file java để connect tới database
+Việc connect qua các bước
+a/ Tạo database connection (ở đây ta khai báo url, schemaname, username, password "jdbc:mysql://localhost:3306/blogfullstack", "root", "16111994");
+      Connection con = DriverManager.getConnection(
+                    "jdbc:mysql://localhost:3306/blogfullstack", "root", "16111994");
+b/ tạo create statement
+     Statement stmt = con.createStatement();
+
+c/ Thực hiện query và lấy kết quả qua đối tượng rs (tên bất kỳ) của lớp ResultSet
+ ResultSet rs = stmt.executeQuery("select * from user");
+
+ Việc đặt vào try catch block sẽ tự động close connection đến database thay vì close thủ công trước java8
+
+
+VD--------------
+import java.sql.*;
+
+public class ConnectDB {
+    public static void main(String[] args) {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection(
+                    "jdbc:mysql://localhost:3306/blogfullstack", "root", "16111994");
+            //here blog is database name, root is username and password
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery("select * from user");
+            while (rs.next())
+                System.out.println(rs.getInt(1) + "  " + rs.getString(2) + "  " + rs.getString(3) + "  " + rs.getString(4) + "  " + rs.getString(5));
+            con.close();
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+    public  static Connection getConnectionDB() {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/blogfullstack", "root", "16111994");
+            return con;
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+}
